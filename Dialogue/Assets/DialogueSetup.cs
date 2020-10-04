@@ -4,15 +4,10 @@ using UnityEngine;
 
 public class DialogueSetup : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField]
+    List<string> texts = new List<string>();
+    List<string> GetTexts()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        return texts;
     }
 }

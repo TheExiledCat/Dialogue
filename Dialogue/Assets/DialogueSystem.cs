@@ -4,14 +4,15 @@ using UnityEngine;
 
 public class DialogueSystem : MonoBehaviour
 {
-    List<string> dialogues = new List<string>();
+    [SerializeField]
+    List<Dialogue> dialogues = new List<Dialogue>();
     List<Sprite> portrets = new List<Sprite>();
     public static DialogueSystem DS;
     bool started = false;
     bool clicked = false;
-    public event Action<string,Sprite> DialogueChanged;
+    public event Action<Dialogue,Sprite> DialogueChanged;
     public event Action DialoguesCompleted;
-
+    bool pause = false;
     private void Awake()
     {
         if (DS == null)
@@ -23,22 +24,23 @@ public class DialogueSystem : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    public void AddToQueue(string _dialogue,Sprite portret)
+    public void AddToQueue(Dialogue _dialogue,Sprite portret=null)
     {
         dialogues.Add(_dialogue);
         portrets.Add(portret);
     }
     private void Update()
     {
-        print(started);
-        if (started&&Input.GetMouseButtonDown(0))
+        
+        if (started&&Input.GetMouseButtonDown(0)&&!pause)
         {
             if (!clicked)
             {
                 clicked = true;
             }
-            else
+            else 
             {
+
                 NextDialogue();
             }
             
@@ -50,6 +52,7 @@ public class DialogueSystem : MonoBehaviour
 
     public void NextDialogue()
     {
+        pause = false;
         if (dialogues.Count == 0&&started)
         {
             started = false;
@@ -57,8 +60,12 @@ public class DialogueSystem : MonoBehaviour
             DialoguesCompleted?.Invoke();
             return;
         }
+        if (dialogues[0].GetType() == typeof(Question))
+        {
+            pause = true;
+        }
         started = true;
-        string currentDialogue = dialogues[0];
+        Dialogue currentDialogue = dialogues[0];
         Sprite currentPortret = portrets[0];
         dialogues.RemoveAt(0);
         portrets.RemoveAt(0);

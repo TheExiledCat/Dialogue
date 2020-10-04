@@ -5,20 +5,37 @@ using UnityEngine;
 public class NPCDialogue : MonoBehaviour
 {
     [SerializeField]
-    List<string> dialogues = new List<string>();
+    protected List<Dialogue> dialogues = new List<Dialogue>();
+    [SerializeField]
+    protected List<Question> questions = new List<Question>();
     [SerializeField] Sprite myDialoguePortret;
+    public void AddDialogues(List<Dialogue> _dialogues)
+    {
+        dialogues.AddRange(_dialogues);
+    }
     private void OnMouseDown()
+    {
+        Talk();
+        
+        
+    }
+    protected void Talk()
     {
         if (dialogues.Count > 0)
         {
-            foreach (string d in dialogues)
+            foreach (Dialogue d in dialogues)
             {
+
                 DialogueSystem.DS.AddToQueue(d, myDialoguePortret);
+            }
+            foreach (Question q in questions)
+            {
+                DialogueSystem.DS.AddToQueue(q, myDialoguePortret);
             }
             DialogueSystem.DS.NextDialogue();
             dialogues.Clear();
+            questions.Clear();
         }
-        
     }
     public Sprite GetPortret()
     {
